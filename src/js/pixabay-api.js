@@ -32,6 +32,6 @@ export function getImagesByText(text) {
       return data.hits;
     })
     .then(images => renderGallery(images))
-    .catch(error => console.log(error));
-  // .finally(() => document.querySelector('.loader').remove());
+    .catch(error => console.log(error))
+    .finally(() => document.querySelector('.loader').remove());
 }
