@@ -12,6 +12,7 @@ export function getImagesByText(text) {
     orientation: 'horizontal',
     safesearch: true,
   });
+
   refs.form.insertAdjacentHTML('afterend', '<span class="loader"></span>');
 
   fetch(`${BASE_URL}?${params}`)
@@ -26,7 +27,7 @@ export function getImagesByText(text) {
         return iziToast.error({
           message:
             'Sorry, there are no images matching your search query. Please try again!',
-          position: 'topRight',
+          position: 'center',
         });
       }
       return data.hits;
