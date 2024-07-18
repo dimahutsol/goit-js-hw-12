@@ -2,6 +2,11 @@ import { refs } from '../main';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+let gallery = new SimpleLightbox('.gallery-item a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
+
 function createCardMarkup({
   webformatURL,
   largeImageURL,
@@ -49,9 +54,5 @@ function createGalleryMarkup(items) {
 export function renderGallery(items) {
   const galleryMarkup = createGalleryMarkup(items);
   refs.galleryList.innerHTML = galleryMarkup;
-  let gallery = new SimpleLightbox('.gallery-item a', {
-    captionsData: 'alt',
-    captionDelay: 250,
-  });
   gallery.refresh();
 }
