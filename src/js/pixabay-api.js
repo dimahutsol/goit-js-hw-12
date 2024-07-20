@@ -1,21 +1,22 @@
 import { refs } from '../main';
+import axios from 'axios';
+axios.defaults.baseURL = 'https://pixabay.com';
 
-export function getImagesByText(text) {
-  const BASE_URL = 'https://pixabay.com/api/';
-  const params = new URLSearchParams({
-    key: '44981413-36d40c10f5ea072ce48bfd774',
-    q: text,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
+export async function getImagesByText(text, page, per_page) {
+  refs.loader.classList.remove('hidden');
+  refs.loadMoreBtn.classList.add('hidden');
+
+  const result = await axios.get('/api/', {
+    params: {
+      key: '44981413-36d40c10f5ea072ce48bfd774',
+      q: text,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: true,
+      page,
+      per_page,
+    },
   });
 
-  refs.form.insertAdjacentHTML('afterend', '<span class="loader"></span>');
-
-  return fetch(`${BASE_URL}?${params}`).then(response => {
-    if (!response.ok) {
-      throw new Error(response.status);
-    }
-    return response.json();
-  });
+  return result.data;
 }

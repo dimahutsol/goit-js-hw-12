@@ -72,6 +72,8 @@
 
 .gallery-card-image {
   margin-bottom: 5px;
+  height: 200px;
+  width: 100%;
 }
 
 .gallery-card-info {
@@ -138,4 +140,14 @@
   100% {
     width: 48px;
   }
+}
+
+.load-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.hidden {
+  display: none;
 }

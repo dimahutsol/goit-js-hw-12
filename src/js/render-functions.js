@@ -56,3 +56,9 @@ export function renderGallery(items) {
   refs.galleryList.innerHTML = galleryMarkup;
   gallery.refresh();
 }
+
+export function renderMorePhotos(items) {
+  const galleryMarkup = createGalleryMarkup(items);
+  refs.galleryList.insertAdjacentHTML('beforeend', galleryMarkup);
+  gallery.refresh();
+}
