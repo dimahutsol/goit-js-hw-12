@@ -10,10 +10,10 @@ export const refs = {
   loadMoreBtn: document.querySelector('.js-load-button'),
 };
 
-let textToSearch;
-let page;
 const per_page = 15;
+let page;
 let totalPages;
+let textToSearch;
 let cardHeight;
 
 refs.form.addEventListener('submit', handleFormSubmit);
@@ -23,30 +23,30 @@ async function handleFormSubmit(e) {
   try {
     e.preventDefault();
 
+    textToSearch = e.currentTarget.elements.search.value.trim();
+    if (!textToSearch) return;
+
+    showLoader();
     refs.galleryList.innerHTML = '';
     page = 1;
-    textToSearch = e.currentTarget.elements.search.value.trim();
-
-    if (!textToSearch) return;
     const images = await getImagesByText(textToSearch, page, per_page);
-
-    page += 1;
     totalPages = Math.ceil(images.totalHits / per_page);
 
     if (images.length === 0) {
       throw new Error();
     }
-    renderGallery(images.hits);
 
-    refs.loader.classList.add('hidden');
-    refs.loadMoreBtn.classList.remove('hidden');
+    renderGallery(images.hits);
+    updateLoadMoreBtnStatus();
     e.target.elements.search.value = '';
+    page++;
+
     cardHeight = Math.round(
       refs.galleryList.firstElementChild.getBoundingClientRect().height
     );
   } catch {
-    refs.loader.classList.add('hidden');
-    refs.loadMoreBtn.classList.add('hidden');
+    hideLoader();
+    hideLoadMoreBtn();
     page = 1;
     totalPages = 0;
     iziToast.error({
@@ -58,26 +58,51 @@ async function handleFormSubmit(e) {
 }
 
 async function handleLoadMoreClick() {
-  if (page > totalPages) {
+  try {
+    hideLoadMoreBtn();
+    showLoader();
+    const images = await getImagesByText(textToSearch, page, per_page);
+    renderMorePhotos(images.hits);
+    updateLoadMoreBtnStatus();
+
+    page++;
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  } catch (error) {
+    iziToast.error({
+      message: `${error.message}`,
+      position: 'center',
+    });
+  }
+}
+
+function updateLoadMoreBtnStatus() {
+  if (page >= totalPages) {
     iziToast.info({
       message: `We're sorry, but you've reached the end of search results.`,
       position: 'center',
     });
-    refs.loader.classList.add('hidden');
-    refs.loadMoreBtn.classList.add('hidden');
-    return;
+    hideLoadMoreBtn();
+  } else {
+    showLoadMoreBtn();
   }
+  hideLoader();
+}
 
-  const images = await getImagesByText(textToSearch, page, per_page);
-  page += 1;
+function showLoader() {
+  refs.loader.classList.remove('hidden');
+}
 
-  renderMorePhotos(images.hits);
-
+function hideLoader() {
   refs.loader.classList.add('hidden');
-  refs.loadMoreBtn.classList.remove('hidden');
+}
 
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
+function showLoadMoreBtn() {
+  refs.loadMoreBtn.classList.remove('hidden');
+}
+
+function hideLoadMoreBtn() {
+  refs.loadMoreBtn.classList.add('hidden');
 }
